@@ -1,6 +1,5 @@
 .vscode
 *.o
-input
 
 # ignore binaries
 day*
