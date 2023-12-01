@@ -1,0 +1,9 @@
+.vscode
+*.o
+input
+
+# ignore binaries
+day*
+
+# don't ignore the corresponding source files
+!day*.c
