@@ -134,8 +134,7 @@ void task1(char *file)
 	int sum_possible_games = 0;
 
 	char **game;
-	AFOR_EACH(lines, game)
-	{
+	AFOR_EACH(lines, game) {
 		cubecnt maxcubes = parse_game(*game);
 
 		b32 is_possible = maxcubes.nred <= target.nred &&
@@ -162,8 +161,7 @@ void task2(char *file)
 	int setpower_sum = 0;
 
 	char **game;
-	AFOR_EACH(lines, game)
-	{
+	AFOR_EACH(lines, game) {
 		cubecnt maxcubes = parse_game(*game);
 		dlog("%s -> %d %d %d", *game, maxcubes.nred, maxcubes.ngreen,
 		     maxcubes.nblue);

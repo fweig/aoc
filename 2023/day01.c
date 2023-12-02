@@ -9,8 +9,7 @@ void task1(char *input)
 
 	int calibsum = 0;
 	char **iter;
-	AFOR_EACH(lines, iter)
-	{
+	AFOR_EACH(lines, iter) {
 		char *line = *iter;
 		int fdigit = -1;
 		int ldigit = -1;
@@ -103,8 +102,7 @@ void task2(char *input)
 
 	int calibsum = 0;
 	char **iter;
-	AFOR_EACH(lines, iter)
-	{
+	AFOR_EACH(lines, iter) {
 		char *line = *iter;
 		int c = t2_parse(line);
 		dlog("%s -> %d", line, c);

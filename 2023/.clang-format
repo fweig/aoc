@@ -67,6 +67,7 @@ FixNamespaceComments: false
 
 ForEachMacros:
   - 'ARRAY_FOR_EACH'
+  - 'AFOR_EACH'
 
 IncludeBlocks: Preserve
 IncludeCategories:
