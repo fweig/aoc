@@ -4,5 +4,6 @@
 # ignore binaries
 day*
 
-# don't ignore the corresponding source files
+# don't ignore the corresponding source files and input
 !day*.c
+!day*.txt

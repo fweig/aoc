@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -Wextra -Werror -std=c89 -O2
 
-ALL_SOLUTIONS=$(patsubst day%.c,day%,$(wildcard day*))
+ALL_SOLUTIONS=$(patsubst day%.c,day%,$(wildcard day*.c))
 
 day%: common.h common.c aoc.h day%.c
 	$(CC) $(CFLAGS) -o $@ common.c $@.c
