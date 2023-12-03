@@ -2,6 +2,7 @@
 #define COMMON_H
 
 #define _GNU_SOURCE
+#include <ctype.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,6 +46,17 @@ typedef int b32;
 		(array).capacity = 0;                                          \
 	} while (0)
 
+#define AFREE2D(array2d)                                                       \
+	do {                                                                   \
+		__typeof__((array2d).d[0]) *iter;                              \
+		AFOR_EACH(array2d, iter) {                                     \
+			AFREE(*iter);                                          \
+		}                                                              \
+		AFREE(array2d);                                                \
+	} while (0)
+
+#define AT(array, index) (array).d[(index)]
+
 #define AFOR_EACH(array, iter)                                                 \
 	for ((iter) = (array).d; (iter) < (array).d + (array).size; (iter)++)
 
@@ -84,6 +96,8 @@ void ilog(const char *, ...) __attribute__((format(printf, 1, 2)));
 ARRAY(str, char *);
 void array_str_free(array_str *);
 
+ARRAY(int, int);
+
 /* Read file and split by lines */
 array_str file_read_lines(char *);
 
@@ -91,5 +105,20 @@ __attribute_maybe_unused__ static size_t next_power_of_two(size_t n)
 {
 	return 1 << (sizeof(size_t) * 8 - __builtin_clzl(n) - 1);
 }
+
+/* String parsing */
+
+__attribute_maybe_unused__ static b32 isend(char **line)
+{
+	return **line == '\0';
+}
+
+__attribute_maybe_unused__ static int advance(char **line)
+{
+	(*line)++;
+	return 1;
+}
+
+int try_parse_int(char **line, int *v);
 
 #endif

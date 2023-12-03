@@ -100,3 +100,14 @@ array_str file_read_lines(char *fname)
 	fclose(f);
 	return lines;
 }
+
+int try_parse_int(char **line, int *v)
+{
+	*v = 0;
+	int advanced = 0;
+	for (; **line != '\0' && isdigit(**line); ++*line) {
+		*v = *v * 10 + (**line - '0');
+		advanced++;
+	}
+	return advanced;
+}

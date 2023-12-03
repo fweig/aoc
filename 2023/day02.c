@@ -14,11 +14,6 @@ typedef enum {
 	BLUE,
 } color;
 
-b32 isend(char **line)
-{
-	return **line == '\0';
-}
-
 void parse_whitespace(char **line)
 {
 	for (; **line != '\0' && isspace(**line); ++*line) {
