@@ -20,10 +20,12 @@ int main(int argc, char *argv[])
 		ilog(">>> Task1");
 		task1(input_file);
 	}
+	yfree();
 	if (!testenv("NOTASK2")) {
 		ilog(">>> Task2");
 		task2(input_file);
 	}
+	yfree();
 	return 0;
 }
 #endif

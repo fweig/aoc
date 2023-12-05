@@ -29,8 +29,6 @@ void task1(char *input)
 		calibsum += fdigit * 10 + ldigit;
 	}
 	ilog("Task1: %d", calibsum);
-
-	array_str_free(&lines);
 }
 
 int t2_consume_digit(char **line)
@@ -109,6 +107,4 @@ void task2(char *input)
 		calibsum += c;
 	}
 	ilog("Task2: %d", calibsum);
-
-	array_str_free(&lines);
 }

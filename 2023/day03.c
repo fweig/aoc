@@ -17,14 +17,6 @@ ARRAY(part_number2d, array_part_number);
 ARRAY(symbol, symbol);
 ARRAY(symbol2d, array_symbol);
 
-int try_parse_charseq(char **line, char c)
-{
-	int advanced = 0;
-	while (**line == c && !isend(line)) {
-		advanced += advance(line);
-	}
-	return advanced;
-}
 
 int try_parse_symbol(char **line, char *c)
 {
@@ -35,7 +27,7 @@ int try_parse_symbol(char **line, char *c)
 		return 0;
 
 	*c = **line;
-	return advance(line);
+	return scadv(line);
 }
 
 void parse_schematic_line(char *line, array_symbol *symbols,
@@ -47,7 +39,7 @@ void parse_schematic_line(char *line, array_symbol *symbols,
 		int chars_read = 0;
 
 		int num;
-		chars_read = try_parse_int(&line, &num);
+		chars_read = scint(&line, &num);
 		if (chars_read > 0) {
 			part_number part = { .num = num,
 					     .xpos = xpos,
@@ -59,7 +51,7 @@ void parse_schematic_line(char *line, array_symbol *symbols,
 			continue;
 		}
 
-		chars_read = try_parse_charseq(&line, '.');
+		chars_read = scuntil(&line, '.');
 		if (chars_read > 0) {
 			ddlog("Empty spaces: %d", chars_read);
 			xpos += chars_read;
@@ -183,10 +175,6 @@ void task1(char *fname)
 
 	int sum = sum_part_numbers(symbols, parts);
 	ilog("Result = %d", sum);
-
-	AFREE2D(parts);
-	AFREE2D(symbols);
-	array_str_free(&schematic);
 }
 
 void advance_parts(array_part_number parts, int xpos, array_int *adjacent,
@@ -260,8 +248,6 @@ int sum_gear_ratios_row(array_symbol symbols, array_part_number *parts)
 				AT(adjacent_parts, 0) * AT(adjacent_parts, 1);
 			sum += gear_ratio;
 		}
-
-		AFREE(adjacent_parts);
 	}
 
 	return sum;
@@ -292,8 +278,4 @@ void task2(char *fname)
 
 	int sum = sum_gear_ratios(symbols, parts);
 	ilog("T2 Result = %d", sum);
-
-	AFREE2D(parts);
-	AFREE2D(symbols);
-	array_str_free(&schematic);
 }

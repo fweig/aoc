@@ -69,6 +69,9 @@ ForEachMacros:
   - 'ARRAY_FOR_EACH'
   - 'AFOR_EACH'
 
+TypenameMacros:
+  - 'VTYPE'
+
 IncludeBlocks: Preserve
 IncludeCategories:
   - Regex: '.*'

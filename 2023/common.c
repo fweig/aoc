@@ -1,6 +1,52 @@
 #include "common.h"
 #include <stdarg.h>
 
+ARRAY(ptr, void *);
+
+static array_ptr H = { 0 };
+
+void *ymalloc(size_t bytes)
+{
+	void *ptr = malloc(bytes);
+	yput(ptr);
+	return ptr;
+}
+
+void yput(void *ptr)
+{
+	APUSH(H, ptr);
+}
+
+void *yrealloc(void *oldptr, size_t bytes)
+{
+	ddlog("yrealloc: %zu", bytes);
+	void *newptr = realloc(oldptr, bytes);
+	void **it;
+	AFOR_EACH(H, it) {
+		if (*it == oldptr)
+			*it = newptr;
+	}
+	return newptr;
+}
+
+void yfree()
+{
+	void **it;
+	AFOR_EACH(H, it)
+		free(*it);
+	free(H.d);
+	H = (array_ptr){ 0 };
+}
+
+void arr_adjust_capacity(size_t new_size, size_t vsize, size_t *capacity, void **data)
+{
+	if (new_size <= *capacity)
+		return;
+	new_size = next_power_of_two(new_size);
+	*capacity = MAX(new_size, 8ul);
+	*data = yrealloc(*data, *capacity * vsize);
+}
+
 b32 testenv(char *name)
 {
 	char *env = getenv(name);
@@ -19,6 +65,11 @@ int envint(char *name)
 	return atoi(env);
 }
 
+void require_fail(char *file, int line, char *test)
+{
+	exit_error("%s:%d: Precondition '%s' failed!", file, line, test);
+}
+
 void exit_error(const char *fmt, ...)
 {
 	fputs("F ", stdout);
@@ -27,7 +78,7 @@ void exit_error(const char *fmt, ...)
 	vfprintf(stdout, fmt, args);
 	va_end(args);
 	fputc('\n', stdout);
-	exit(1);
+	abort();
 }
 
 void dlog(const char *fmt, ...)
@@ -66,18 +117,18 @@ void ilog(const char *fmt, ...)
 	fputc('\n', stdout);
 }
 
-void array_str_free(array_str *array)
+int asumint(array_int arr)
 {
-	size_t i;
-	for (i = 0; i < array->size; i++)
-		free(array->d[i]);
-	AFREE(*array);
+	int sum = 0;
+	int *it;
+	AFOR_EACH(arr, it)
+		sum += *it;
+	return sum;
 }
 
 array_str file_read_lines(char *fname)
 {
-	array_str lines;
-	AINIT(lines);
+	array_str lines = { 0 };
 
 	FILE *f = fopen(fname, "r");
 	if (!f) {
@@ -91,17 +142,17 @@ array_str file_read_lines(char *fname)
 	while ((linelen = getline(&line, &linecap, f)) > 0) {
 		if (line[linelen - 1] == '\n')
 			line[linelen - 1] = '\0';
+		yput(line);
 		APUSH(lines, line);
 		line = NULL;
 		linecap = 0;
 	}
 
-	free(line);
 	fclose(f);
 	return lines;
 }
 
-int try_parse_int(char **line, int *v)
+int scint(char **line, int *v)
 {
 	*v = 0;
 	int advanced = 0;
@@ -110,4 +161,55 @@ int try_parse_int(char **line, int *v)
 		advanced++;
 	}
 	return advanced;
+}
+
+int scintf(char **line, int *v)
+{
+	int consumed = scint(line, v);
+	if (consumed == 0)
+		exit_error("Failed to parse int: '%s'", *line);
+	return consumed;
+}
+
+int scuntil(char **line, char c)
+{
+	int consumed = 0;
+	while (peek(line) != c && !isend(line)) {
+		consumed += scadv(line);
+	}
+	consumed += scadv(line); /* Read past c */
+	return consumed;
+}
+
+int scw(char **line)
+{
+	int consumed = 0;
+	while (isspace(peek(line)) && !isend(line)) {
+		consumed += scadv(line);
+	}
+	return consumed;
+}
+
+int scchar(char **line, char c)
+{
+	if (peek(line) == c)
+		return scadv(line);
+	return 0;
+}
+
+int scstr(char **line, char *str)
+{
+	size_t len_prefix = strlen(str);
+	if (strncmp(*line, str, len_prefix) != 0)
+		return 0;
+	*line += len_prefix;
+	return len_prefix;
+}
+
+int scstrf(char **line, char *str)
+{
+	int consumed = scstr(line, str);
+	if (consumed == 0)
+		exit_error("Failed to read prefix '%s': '%s'", str, *line);
+	return consumed;
 }

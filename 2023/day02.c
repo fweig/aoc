@@ -146,7 +146,6 @@ void task1(char *file)
 	}
 
 	ilog("T1 Result: %d", sum_possible_games);
-	array_str_free(&lines);
 }
 
 void task2(char *file)
@@ -166,6 +165,4 @@ void task2(char *file)
 	}
 
 	ilog("T2 Result: %d", setpower_sum);
-
-	array_str_free(&lines);
 }
