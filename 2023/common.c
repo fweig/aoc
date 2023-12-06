@@ -81,6 +81,7 @@ void exit_error(const char *fmt, ...)
 	abort();
 }
 
+#ifndef NO_DLOG
 void dlog(const char *fmt, ...)
 {
 	if (envint("DEBUG") < 1) {
@@ -106,6 +107,7 @@ void ddlog(const char *fmt, ...)
 	va_end(args);
 	fputc('\n', stdout);
 }
+#endif
 
 void ilog(const char *fmt, ...)
 {
@@ -117,13 +119,23 @@ void ilog(const char *fmt, ...)
 	fputc('\n', stdout);
 }
 
-int asumint(array_int arr)
+i64 asumint(array_int arr)
 {
-	int sum = 0;
-	int *it;
+	i64 sum = 0;
+	i64 *it;
 	AFOR_EACH(arr, it)
 		sum += *it;
 	return sum;
+}
+
+i64 aminint(array_int arr)
+{
+	REQ(arr.size > 0);
+	i64 min = FIRST(arr);
+	i64 *it;
+	AFOR_EACHR(arr, it, 1, -1)
+		min = MIN(*it, min);
+	return min;
 }
 
 array_str file_read_lines(char *fname)
@@ -152,18 +164,40 @@ array_str file_read_lines(char *fname)
 	return lines;
 }
 
-int scint(char **line, int *v)
+array_str2d split_at_emtpy_lines(array_str lines)
+{
+	array_str2d section = { 0 };
+	APUSH(section, (array_str){ 0 });
+
+	char **ln;
+	AFOR_EACH(lines, ln)
+	{
+		if (strlen(*ln) == 0) {
+			APUSH(section, (array_str){ 0 });
+			continue;
+		}
+		APUSH(LAST(section), *ln);
+	}
+
+	return section;
+}
+
+int scint(char **line, i64 *v)
 {
 	*v = 0;
 	int advanced = 0;
 	for (; **line != '\0' && isdigit(**line); ++*line) {
-		*v = *v * 10 + (**line - '0');
+		i64 x = *v * 10 + (**line - '0');
+		if (x < *v) {
+			exit_error("Overflow parsing %lld: %lld", *v, x);
+		}
+		*v = x;
 		advanced++;
 	}
 	return advanced;
 }
 
-int scintf(char **line, int *v)
+int scintf(char **line, i64 *v)
 {
 	int consumed = scint(line, v);
 	if (consumed == 0)

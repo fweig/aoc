@@ -68,6 +68,7 @@ FixNamespaceComments: false
 ForEachMacros:
   - 'ARRAY_FOR_EACH'
   - 'AFOR_EACH'
+  - 'AFOR_EACHR'
 
 TypenameMacros:
   - 'VTYPE'
