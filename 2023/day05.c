@@ -126,6 +126,20 @@ array_seedrange parse_seed_ranges(array_str header)
 	return seeds;
 }
 
+array_seedrange find_overlap(SeedRange range, array_seedmap map)
+{
+	array_seedrange overlap = { 0 };
+
+	Seedmap *mapping;
+	AFOR_EACH(map, mapping) {
+		b32 has_overlap = range.start >= mapping->src_st || range.start + range.len <= mapping->src_st + mapping->len;
+		SeedRange overlap = {
+			.start = MAX(range.start, mapping->src_st),
+			.len = MIN(range.start + range.len, mapping->)
+		};
+	}
+}
+
 i64 minloc_range(SeedRange range, array_seedmap2d maps)
 {
 	i64 loc = __INT64_MAX__;

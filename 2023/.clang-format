@@ -69,9 +69,12 @@ ForEachMacros:
   - 'ARRAY_FOR_EACH'
   - 'AFOR_EACH'
   - 'AFOR_EACHR'
+  - 'aforeach'
+  - 'aforeachr'
 
 TypenameMacros:
   - 'VTYPE'
+  - 'vtype'
 
 IncludeBlocks: Preserve
 IncludeCategories:
