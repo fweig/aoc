@@ -71,6 +71,7 @@ ForEachMacros:
   - 'AFOR_EACHR'
   - 'aforeach'
   - 'aforeachr'
+  - 'WALK'
 
 TypenameMacros:
   - 'VTYPE'
