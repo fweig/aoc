@@ -71,11 +71,15 @@ ForEachMacros:
   - 'AFOR_EACHR'
   - 'aforeach'
   - 'aforeachr'
+  - 'aforeach2d_idx'
   - 'WALK'
 
 TypenameMacros:
   - 'VTYPE'
   - 'vtype'
+
+StatementMacros:
+  - '_Pragma'
 
 IncludeBlocks: Preserve
 IncludeCategories:
