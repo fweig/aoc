@@ -3,7 +3,10 @@
 
 # ignore binaries
 day*
+solution
+aoc_test
 
 # don't ignore the corresponding source files and input
 !day*.c
 !day*.txt
+!day*/
